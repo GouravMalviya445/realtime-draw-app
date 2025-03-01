@@ -1,12 +1,13 @@
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { config } from "@repo/be-common/src/config/config";
+import { decodeJwt } from "@repo/be-common/src/lib/decodeJwt";
 import { ApiResponse, ApiError, requestHandler } from "@repo/be-common/src/utils";
 import { NextFunction, Request, Response } from "express";
 
 
 const authMiddleware = requestHandler(async (req: Request, res: Response, next: NextFunction) => {
-  const token = req.header("Authorization")?.replace("Bearer ", "") || req.cookies["accessToken"];
-  if (!token) {
+  const accessToken = req.header("Authorization")?.replace("Bearer ", "") || req.cookies["accessToken"];
+  if (!accessToken) {
     throw new ApiError(401, "Unauthorized / token not found");
   }
 
@@ -16,9 +17,9 @@ const authMiddleware = requestHandler(async (req: Request, res: Response, next: 
 
   try {
     // decode the token 
-    const accessToken = jwt.verify(token, config.accessTokenSecret);
+    const decodedToken = decodeJwt(accessToken, config.accessTokenSecret);
 
-    if (typeof accessToken === "string") {
+    if (typeof decodedToken === "string") {
       throw new ApiError(401, "Unauthorized / invalid token");
     }
 
