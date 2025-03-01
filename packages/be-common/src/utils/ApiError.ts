@@ -1,3 +1,5 @@
+import { config } from "../config/config";
+
 class ApiError extends Error {
   statusCode: number;
   message: string;
@@ -15,11 +17,13 @@ class ApiError extends Error {
     this.message = message;
     this.data = null;
     this.errors = errors;
-    
-    if (stack) {
-      this.stack = stack;
-    } else {
-      Error.captureStackTrace(this, this.constructor);
+
+    if (config.nodeEnv === "development") {
+      if (stack) {
+        this.stack = stack;
+      } else {
+        Error.captureStackTrace(this, this.constructor);
+      }
     }
   }
 }
