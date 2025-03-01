@@ -13,7 +13,7 @@ app.post(`${baseApiRoute}/signin`, (req, res) => {
 
 });
 
-app.post(`${baseApiRoute}/add`, (req, res) => {
+app.post(`${baseApiRoute}/create-room`, (req, res) => {
 
 });
 
