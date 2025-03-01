@@ -7,3 +7,7 @@ const createRoom = requestHandler(async (req, res) => {
     throw new ApiError(500, "Error while creating room", [], error.stack)
   }
 })
+
+export {
+  createRoom,
+}
