@@ -3,19 +3,15 @@ import { config } from "@repo/be-common/src/config/config";
 
 const app = express();
 
-const baseApiRoute = "/api/v1";
+app.use(express.json());
 
-app.post(`${baseApiRoute}/signup`, (req, res) => {
+// all routes
+import userRouter from "./routes/user.routes";
+import roomRouter from "./routes/room.routes";
 
-});
+app.use("/api/v1/user", userRouter);
+app.use("/api/v1/room", roomRouter);
 
-app.post(`${baseApiRoute}/signin`, (req, res) => {
-
-});
-
-app.post(`${baseApiRoute}/create-room`, (req, res) => {
-
-});
 
 const port = config.port || 5154
 app.listen(port, () => {
