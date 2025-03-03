@@ -1,6 +1,5 @@
 import { requestHandler, ApiError, ApiResponse } from "@repo/be-common/src/utils";
-import { userSignupValidation } from "../schemas/userSignupValidation";
-import { userSigninValidation } from "../schemas/userSigninValidation";
+import { userSignupValidation, userSigninValidation } from "@repo/common/src/types";
 
 const userSignup = requestHandler(async (req, res) => {
   const {success, data, error} = userSignupValidation.safeParse(req.body);
