@@ -31,6 +31,8 @@ model Room {
   slug          String      @unique
   adminId       String     
   admin         User        @relation(fields: [adminId], references: [id])
+  createdAt     DateTime?   @default(now())
+  updatedAt     DateTime?   @default(now())   @updatedAt
 }
 
 model Chat {
@@ -39,4 +41,6 @@ model Chat {
   receiver      User        @relation(name: "receiverMessages", fields: [receiverId], references: [id])
   senderId      String
   receiverId    String
+  message       String
+  createdAt     DateTime?   @default(now())
 }
