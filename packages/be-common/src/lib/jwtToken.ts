@@ -1,10 +1,14 @@
 import jwt from "jsonwebtoken"
 import { config } from "../config/config";
 
-export function verifyJwtToken(token: string, secret: string) {
+export function verifyJwtToken(token: string) {
   if (!token) return null;
   try {
-    return jwt.verify(token, secret);
+    if (!config.accessTokenSecret) {
+      throw new Error("Secret not defined");
+    }
+    
+    return jwt.verify(token, config.accessTokenSecret);
   } catch (err) {
     throw new Error("Error while verifying token");
   }
