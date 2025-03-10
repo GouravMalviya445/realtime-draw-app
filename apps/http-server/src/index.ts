@@ -10,8 +10,8 @@ import userRouter from "./routes/user.routes";
 import roomRouter from "./routes/room.routes";
 import errorHandler from "./middlewares/error.middleware";
 
-app.use("/api/v1/user", userRouter);
-app.use("/api/v1/room", roomRouter);
+app.use("/api/v1/users", userRouter);
+app.use("/api/v1/rooms", roomRouter);
 
 
 // global error handler
