@@ -1,5 +1,5 @@
 import { WebSocketServer } from 'ws';
-import { decodeJwt } from "@repo/be-common/src/lib/decodeJwt";
+import { verifyJwtToken } from "@repo/be-common/src/lib";
 import { config } from "@repo/be-common/src/config/config";
 
 const wss = new WebSocketServer({ port: 8080 });
@@ -17,7 +17,7 @@ wss.on('connection', function connection(ws, req) {
     return;
   }
 
-  const decodedToken = decodeJwt(accessToken, config.accessTokenSecret);
+  const decodedToken = verifyJwtToken(accessToken);
   
   ws.on('message', function message(data) {
     console.log('received: %s', data);
