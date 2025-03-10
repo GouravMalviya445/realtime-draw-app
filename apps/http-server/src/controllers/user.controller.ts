@@ -1,4 +1,5 @@
 import { requestHandler, ApiError, ApiResponse } from "@repo/be-common/src/utils";
+import { hashPassword, comparePassword } from "@repo/be-common/src/lib";
 import { userSignupValidation, userSigninValidation } from "@repo/common/src/types";
 import { prisma } from "@repo/db/prisma";
 
@@ -20,11 +21,14 @@ const userSignup = requestHandler(async (req, res) => {
       throw new ApiError(400, "User already exist with this email");
     }
 
+    // create hash and store in DB
+    const hashedPassword = await hashPassword(data.password);
+
     const newUser = await prisma.user.create({
       data: {
         name: data.name,
         email: data.email,
-        password: data.password
+        password: hashedPassword
       },
       select: {
         name: true,
