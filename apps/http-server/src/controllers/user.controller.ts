@@ -1,5 +1,5 @@
 import { requestHandler, ApiError, ApiResponse } from "@repo/be-common/src/utils";
-import { hashPassword, comparePassword } from "@repo/be-common/src/lib";
+import { hashPassword, comparePassword, createJwtToken } from "@repo/be-common/src/lib";
 import { userSignupValidation, userSigninValidation } from "@repo/common/src/types";
 import { prisma } from "@repo/db/prisma";
 
@@ -51,21 +51,55 @@ const userSignup = requestHandler(async (req, res) => {
       ))
     
   } catch (error: any) {
-    throw new ApiError(500, "Error while registering user", [], error.stack)
+    throw new ApiError(500, "Error while registering user", error?.errors || [], error.stack)
   }
 })
 
 const userSignin = requestHandler(async (req, res) => {
-  
-  const {success, data, error} = userSigninValidation.safeParse(req.body);
+  const { success, data, error } = userSigninValidation.safeParse(req.body);
   if (!success) {
     throw new ApiError(400, "Invalid Inputs", error.errors, error.stack)
   }
 
   try {
     // db calls
+    
+    const existedUser = await prisma.user.findUnique({
+      where: { email: data.email }
+    });
+    if (!existedUser?.id) {
+      throw new ApiError(400, "404 not found");
+    }
+
+    const isPasswordCorrect = await comparePassword(data.password, existedUser.password);
+    if (!isPasswordCorrect) {
+      throw new ApiError(401, "Invalid Credentials | wrong password");
+    }
+    
+    const user = {
+      id: existedUser.id,
+      email: existedUser.email,
+      name: existedUser.name,
+      avatarUrl: existedUser.avatarUrl,
+      createdAt: existedUser.createdAt
+    }
+    
+    // create accessToken
+    const accessToken = createJwtToken({ id: user.id });
+
+    return res
+      .status(200)
+      .json(new ApiResponse(
+        200,
+        "User fetched Successfully",
+        {
+          user,
+          accessToken
+        }
+      ))
+    
   } catch (error: any) {
-    throw new ApiError(500, "Error while signing in user", [], error.stack)
+    throw new ApiError(500, "Error while signing in user", error?.errors || [], error.stack)
   }
 })
 
