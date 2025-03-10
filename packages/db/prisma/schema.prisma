@@ -21,7 +21,7 @@ model User {
   avatarUrl     String?
   createdAt     DateTime?   @default(now()) 
   updatedAt     DateTime?   @default(now())   @updatedAt
-  room          Room[]
+  createdRooms  Room[]
   sendChats     Chat[]      @relation(name: "senderMessages")
   receiveChats  Chat[]      @relation(name: "receiverMessages")
 }
