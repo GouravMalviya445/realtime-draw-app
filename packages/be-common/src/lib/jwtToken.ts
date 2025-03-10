@@ -5,6 +5,6 @@ export function verifyJwtToken(token: string, secret: string) {
   try {
     return jwt.verify(token, secret);
   } catch (err) {
-    return null;
+    throw new Error("Error while verifying token");
   }
 }
