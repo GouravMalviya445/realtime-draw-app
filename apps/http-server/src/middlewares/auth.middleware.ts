@@ -1,33 +1,59 @@
-import jwt, { JwtPayload } from "jsonwebtoken";
-import { config } from "@repo/be-common/src/config/config";
 import { verifyJwtToken } from "@repo/be-common/src/lib";
-import { ApiResponse, ApiError, requestHandler } from "@repo/be-common/src/utils";
+import { ApiError, requestHandler } from "@repo/be-common/src/utils";
 import { NextFunction, Request, Response } from "express";
+import { prisma } from "@repo/db/prisma";
 
+
+declare global {
+  namespace Express {
+    interface Request {
+      user?: {
+        id: string;
+        name: string;
+        email: string;
+        password?: string;
+        createdAt?: Date;
+        updatedAt?: Date;
+      }
+    }
+  }
+}
 
 const authMiddleware = requestHandler(async (req: Request, res: Response, next: NextFunction) => {
   const accessToken = req.header("Authorization")?.replace("Bearer ", "") || req.cookies["accessToken"];
   if (!accessToken) {
-    throw new ApiError(401, "Unauthorized / token not found");
-  }
-
-  if (!config.accessTokenSecret) {
-    throw new ApiError(500, "Access token secret not found");
+    throw new ApiError(401, "Unauthorized | token not found");
   }
 
   try {
     // decode the token 
-    const decodedToken = verifyJwtToken(accessToken, config.accessTokenSecret);
+    const decodedToken = verifyJwtToken(accessToken);
 
-    if (typeof decodedToken === "string") {
-      throw new ApiError(401, "Unauthorized / invalid token");
+    if (!decodedToken || typeof decodedToken === "string") {
+      throw new ApiError(401, "Unauthorized | Invalid token");
     }
 
-    // TODO: find the user with the userId you get from the accessToken
-    // TODO: add user to req object req.user = user
+    // find the user with the userId you get from the accessToken
+    const user = await prisma.user.findUnique({
+      where: { id: decodedToken?.id },
+      select: {
+        id: true,
+        password: false,
+        name: true,
+        email: true,
+        createdAt: true,
+        updatedAt: true,
+      }
+    });
+    if (!user) {
+      throw new ApiError(401, "Unauthorized | Invalid token")
+    }
+    
+    // add user to req object req.user = user
+    req.user = user;
     next();
   } catch (error) {
-    throw new ApiError(401, "Unauthorized / invalid token");
+    throw new ApiError(401, "Unauthorized | Invalid token");
   }
 })
 
