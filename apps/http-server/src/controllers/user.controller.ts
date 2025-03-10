@@ -1,6 +1,6 @@
 import { requestHandler, ApiError, ApiResponse } from "@repo/be-common/src/utils";
 import { hashPassword, comparePassword, createJwtToken } from "@repo/be-common/src/lib";
-import { userSignupValidation, userSigninValidation } from "@repo/common/src/types";
+import { userSignupValidation, userSigninValidation } from "@repo/common/zod";
 import { prisma } from "@repo/db/prisma";
 
 
@@ -27,7 +27,7 @@ const userSignup = requestHandler(async (req, res) => {
     const newUser = await prisma.user.create({
       data: {
         name: data.name,
-        email: data.email,
+        email: data.email.toLowerCase(),
         password: hashedPassword
       },
       select: {
@@ -36,6 +36,7 @@ const userSignup = requestHandler(async (req, res) => {
         id: true,
         avatarUrl: true,
         createdAt: true,
+        updatedAt: true,
       }
     });
     if (!newUser?.id) {
@@ -51,7 +52,7 @@ const userSignup = requestHandler(async (req, res) => {
       ))
     
   } catch (error: any) {
-    throw new ApiError(500, "Error while registering user", error?.errors || [], error.stack)
+    throw new ApiError(500, error.message || "Error while registering user", error?.errors || [], error.stack)
   }
 })
 
@@ -73,7 +74,7 @@ const userSignin = requestHandler(async (req, res) => {
 
     const isPasswordCorrect = await comparePassword(data.password, existedUser.password);
     if (!isPasswordCorrect) {
-      throw new ApiError(401, "Invalid Credentials | wrong password");
+      throw new ApiError(401, "Password is not correct");
     }
     
     const user = {
@@ -91,7 +92,7 @@ const userSignin = requestHandler(async (req, res) => {
       .status(200)
       .json(new ApiResponse(
         200,
-        "User fetched Successfully",
+        "User logged in Successfully",
         {
           user,
           accessToken
@@ -99,11 +100,22 @@ const userSignin = requestHandler(async (req, res) => {
       ))
     
   } catch (error: any) {
-    throw new ApiError(500, "Error while signing in user", error?.errors || [], error.stack)
+    throw new ApiError(500, error.message || "Error while signing in user", error?.errors || [], error.stack)
   }
+})
+
+const getCurrentUser = requestHandler(async (req, res) => {
+  return res
+    .status(200)
+    .json(new ApiResponse(
+      200,
+      "User fetched successfully",
+      { user: req.user }
+    ))
 })
 
 export {
   userSignup,
-  userSignin
+  userSignin,
+  getCurrentUser,
 }
