@@ -10,7 +10,7 @@ export function verifyJwtToken(token: string) {
     
     return jwt.verify(token, config.accessTokenSecret);
   } catch (err) {
-    throw new Error("Error while verifying token");
+    console.log("Error while verifying token");
   }
 }
 
@@ -26,6 +26,6 @@ export function createJwtToken(payload: object) {
       { expiresIn: config.accessTokenExpiry } as jwt.SignOptions // jwt options
     )
   } catch (err) {
-    throw new Error("Error while creating jwt token");    
+    console.log("Error while creating jwt token");    
   }
 }
