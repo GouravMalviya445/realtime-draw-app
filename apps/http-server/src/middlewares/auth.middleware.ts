@@ -20,7 +20,7 @@ declare global {
 }
 
 const authMiddleware = requestHandler(async (req: Request, res: Response, next: NextFunction) => {
-  const accessToken = req.header("Authorization")?.replace("Bearer ", "") || req.cookies["accessToken"];
+  const accessToken = req.header("Authorization")?.replace("Bearer ", "") || req.cookies?.["accessToken"];
   if (!accessToken) {
     throw new ApiError(401, "Unauthorized | token not found");
   }
