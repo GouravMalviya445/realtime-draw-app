@@ -12,3 +12,7 @@ export const userSigninValidation = z.object({
 	password: z.string().min(6, {message: "password must be at least 6 character long"})
 });
 
+export const createRoomValidation = z.object({
+  name: z.string().toLowerCase().trim().min(3, { message: "name is to short" }).max(255, { message: "name is too long" })
+})
+
