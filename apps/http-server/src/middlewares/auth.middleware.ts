@@ -46,14 +46,14 @@ const authMiddleware = requestHandler(async (req: Request, res: Response, next: 
       }
     });
     if (!user) {
-      throw new ApiError(401, "Unauthorized | Invalid token")
+      throw new ApiError(404, "User not found")
     }
     
     // add user to req object req.user = user
     req.user = user;
     next();
-  } catch (error) {
-    throw new ApiError(401, "Unauthorized | Invalid token");
+  } catch (error: any) {
+    throw new ApiError(500, error.message || "Unauthorized | Invalid token", error.errors || [], error.stack || "");
   }
 })
 
