@@ -43,6 +43,41 @@ const createRoom = requestHandler(async (req, res) => {
   }
 })
 
+const getRoomChats = requestHandler(async (req, res) => { 
+  const roomId = req.params.roomId;
+  if (!roomId) {
+    throw new ApiError(400, "Room id not found");
+  }
+
+  try {
+    const chats = await prisma.chat.findMany({
+      where: {
+        roomId: parseInt(roomId)
+      },
+      orderBy: {
+        id: "desc"
+      },
+      take: 50
+    })
+
+    if (!chats) {
+      throw new ApiError(404, "Chats not found");
+    }
+
+    return res
+      .status(200)
+      .json(new ApiResponse(
+        200,
+        "Chats successfully feched",
+        { chats }
+      ))
+  } catch (err: any) {
+    throw new ApiError(500, err.message || "Error while getting the chats", [], err.stack || "")
+  }
+  
+})
+
 export {
   createRoom,
+  getRoomChats
 }
