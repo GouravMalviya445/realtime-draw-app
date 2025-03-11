@@ -23,8 +23,7 @@ model User {
   updatedAt     DateTime    @default(now())   @updatedAt
 
   createdRooms  Room[]
-  sendChats     Chat[]      @relation(name: "senderMessages")
-  receiveChats  Chat[]      @relation(name: "receiverMessages")
+  chats         Chat[]
 }
 
 model Room {
@@ -46,11 +45,8 @@ model Chat {
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @default(now())   @updatedAt
 
-  sender        User?       @relation(name: "senderMessages", fields: [senderId], references: [id])
-  senderId      String?
-
-  receiver      User?       @relation(name: "receiverMessages", fields: [receiverId], references: [id])
-  receiverId    String?
+  sender        User?       @relation(fields: [userId], references: [id])
+  userId      String?
 
   room          Room        @relation(fields: [roomId], references: [id])
   roomId        Int
