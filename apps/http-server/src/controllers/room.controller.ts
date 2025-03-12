@@ -44,7 +44,7 @@ const createRoom = requestHandler(async (req, res) => {
 })
 
 const getRoomChats = requestHandler(async (req, res) => { 
-  const roomId = req.params.roomId;
+  const roomId = req.params?.roomId;
   if (!roomId) {
     throw new ApiError(400, "Room id not found");
   }
@@ -77,7 +77,36 @@ const getRoomChats = requestHandler(async (req, res) => {
   
 })
 
+const getRoom = requestHandler(async (req, res) => {
+  const slug = req.params?.slug;
+  if (!slug?.trim()) {
+    throw new ApiError(400, "Slug is required");
+  }
+
+  const filteredSlug = slug.toLowerCase().split(" ").join("-")
+
+  try {
+    const room = await prisma.room.findUnique({
+      where: { slug:  filteredSlug}
+    });
+    if (!room) {
+      throw new ApiError(404, `Room with slug: ${filteredSlug} is not find`);
+    }
+
+    return res
+      .status(200)
+      .json(new ApiResponse(
+        200,
+        "Room fetched successfully",
+        { room }
+      ));
+  } catch (err: any) {
+    throw new ApiError(500, err.message || "Something went wrong while fetching the room");
+  }
+})
+
 export {
   createRoom,
-  getRoomChats
+  getRoomChats,
+  getRoom
 }
