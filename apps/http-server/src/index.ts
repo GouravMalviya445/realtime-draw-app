@@ -6,7 +6,7 @@ const app = express();
 
 app.use(express.json());
 app.use(cors({
-    origin: config.corsOrigin,
+    origin: [config.corsOrigin ?? "", "http://localhost:3000", "http://localhost:5173"],
     methods: ["POST", "PUT", "DELETE", "UPDATE", "PATCH", "GET"],
     // credentials: true // PASS THIS IF YOU ARE USING COOKIES FOR AUTHENTICATION
 }))
