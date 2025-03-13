@@ -1,9 +1,15 @@
 import express from "express"
 import { config } from "@repo/be-common/src/config/config";
+import cors from "cors";
 
 const app = express();
 
 app.use(express.json());
+app.use(cors({
+    origin: config.corsOrigin,
+    methods: ["POST", "PUT", "DELETE", "UPDATE", "PATCH", "GET"],
+    // credentials: true // PASS THIS IF YOU ARE USING COOKIES FOR AUTHENTICATION
+}))
 
 // all routes
 import userRouter from "./routes/user.routes";
