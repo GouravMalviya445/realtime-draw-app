@@ -69,7 +69,7 @@ const userSignin = requestHandler(async (req, res) => {
       where: { email: data.email }
     });
     if (!existedUser?.id) {
-      throw new ApiError(400, "404 not found");
+      throw new ApiError(404, "User not found with this email");
     }
 
     const isPasswordCorrect = await comparePassword(data.password, existedUser.password);
