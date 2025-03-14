@@ -3,8 +3,8 @@ import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { apiClient } from "@/lib/apiClient";
-import { Button } from "@/components/Button";
-import { Input } from "@/components/Input";
+import { Button } from "@repo/ui/button";
+import { Input } from "@repo/ui/input";
 import Link from "next/link";
 import { toast } from "react-toastify";
 
