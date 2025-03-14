@@ -18,13 +18,13 @@ const variants = {
   "warning": "bg-yellow-500 hover:bg-yellow-400 text-gray-900 rounded-md focus:ring-yellow-300",
   "light": "bg-gray-200 hover:bg-gray-300 text-gray-900 rounded-md focus:ring-gray-300",
   "dark": "bg-gray-800 hover:bg-gray-900 text-white rounded-md focus:ring-gray-700",
-  "link": "text-blue-500 hover:text-blue-600 hover:underline focus:outline-none",
+  "link": "text-blue-500 hover:text-blue-600 hover:underline focus:outline-none focus:ring focus:ring-opacity-50 transition-all ease-in",
 };
 
 const defaultClasses = "font-semibold cursor-pointer focus:outline-none focus:ring focus:ring-opacity-50 transition-all ease-in"
 
 const sizes = {
-  "sm": "px-4 py-1",
+  "sm": "px-2 py-1",
   "md": "px-6 py-2 text-md",
   "lg": "px-8 py-2 text-lg",
 }
@@ -33,7 +33,7 @@ export const Button = ({ children, type="button", className, variant="primary", 
   return (
     <button
       type={type}
-      className={`${defaultClasses} ${variants[variant]} ${sizes[size]} ${className ?? ""}`}
+      className={`${defaultClasses} ${sizes[size]} ${variants[variant]} ${className ?? ""}`}
     >
       {children}
     </button>
