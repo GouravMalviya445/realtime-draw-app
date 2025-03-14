@@ -8,6 +8,8 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement>{
   className?: string;
   variant?: "primary" | "secondary" | "danger" | "success" | "warning" | "light" | "dark" | "link";
   size?: "sm" | "md" | "lg";
+  startIcon?: ReactNode;
+  endIcon?: ReactNode;
 }
 
 const variants = {
@@ -29,13 +31,23 @@ const sizes = {
   "lg": "px-8 py-2 text-lg",
 }
 
-export const Button = ({ children, type="button", className, variant="primary", size="md" }: ButtonProps) => {
+export const Button = ({
+  children,
+  type = "button",
+  className = "",
+  variant = "primary",
+  size = "md",
+  startIcon,
+  endIcon
+}: ButtonProps) => {
   return (
     <button
       type={type}
-      className={`${defaultClasses} ${variants[variant]} ${sizes[size]} ${className ?? ""}`}
+      className={`${defaultClasses} ${variants[variant]} ${sizes[size]} ${className}`}
     >
+      {startIcon && startIcon} {/* if user sends any icon at start */}
       {children}
+      {endIcon && endIcon} {/* if user sends any icon at end */}
     </button>
   );
 };
