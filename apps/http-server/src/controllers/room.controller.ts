@@ -43,7 +43,8 @@ const createRoom = requestHandler(async (req, res) => {
   }
 })
 
-const getRoomChats = requestHandler(async (req, res) => { 
+// get all the chat history of a particular room 
+const getRoomChatsByRoomId = requestHandler(async (req, res) => { 
   const roomId = req.params?.roomId;
   if (!roomId) {
     throw new ApiError(400, "Room id not found");
@@ -77,7 +78,8 @@ const getRoomChats = requestHandler(async (req, res) => {
   
 })
 
-const getRoom = requestHandler(async (req, res) => {
+// get room details by slug given by the user 
+const getRoomBySlug = requestHandler(async (req, res) => {
   const slug = req.params?.slug;
   if (!slug?.trim()) {
     throw new ApiError(400, "Slug is required");
@@ -105,8 +107,45 @@ const getRoom = requestHandler(async (req, res) => {
   }
 })
 
+// get all the rooms created by the admin
+const getAllRoomsCreatedByAdmin = requestHandler(async (req, res) => {
+  const adminId = req?.user?.id;
+  if (!adminId) {
+    throw new ApiError(400, "Admin id not found");
+  }
+  
+  try {
+    const rooms = await prisma.room.findMany({
+      where: { adminId },
+      orderBy: {
+        id: "desc"
+      },
+      select: {
+        id: true,
+        slug: true,
+        createdAt: true
+      }
+    });
+
+    if (!rooms) {
+      throw new ApiError(404, "You don't have any room please create one");
+    }
+
+    return res
+      .status(200)
+      .json(new ApiResponse(
+        200,
+        "Rooms fetched successfully",
+        { rooms }
+      ))
+  } catch (error: any) {
+    throw new ApiError(500, error.message || "Error while getting the rooms", [], error.stack || "");
+  }
+})
+
 export {
   createRoom,
-  getRoomChats,
-  getRoom
+  getRoomChatsByRoomId,
+  getRoomBySlug,
+  getAllRoomsCreatedByAdmin
 }
