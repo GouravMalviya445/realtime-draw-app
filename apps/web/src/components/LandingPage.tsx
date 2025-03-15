@@ -14,9 +14,9 @@ import { Footer } from './Footer';
 
 export function LandingPage() {
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-800">
+    <div className="min-h-screen bg-gradient-to-br from-pink-100 to-blue-100  bg-gray-50 dark:bg-gray-800">
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 dark:bg-slate-700/80 dark:shadow-none bg-white/80 backdrop-blur-sm shadow-sm z-50">
+      <header className="fixed top-0 left-0 right-0 dark:bg-slate-700/80 dark:shadow-none dark:backdrop-blur-none bg-pink-200/5 backdrop-blur-sm shadow-sm z-50">
         {/* Navbar */}
         <Navbar />
       </header>
