@@ -1,13 +1,3 @@
-import { 
-  Pencil, 
-  Share2, 
-  Users,
-  Shapes,
-  ArrowRight,
-  Sun,
-} from 'lucide-react';
-import { FeatureCard } from './FeatureCard';
-import { NavigateButton } from './NavigateButton';
 import { Navbar } from './Navbar';
 import { HeroSection } from './HeroSection';
 import { Footer } from './Footer';
