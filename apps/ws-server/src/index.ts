@@ -31,7 +31,7 @@ wss.on('connection', function connection(ws, req) {
   prisma
     .$connect()
     .then(() => console.log("Connected to DB"))
-    .catch(err => console.log("Error while connecting to DB", err));
+    .catch((err: any) => console.log("Error while connecting to DB", err));
 
   console.log("A client connected to websocket"); 
   ws.on('error', (err) => {
@@ -48,7 +48,7 @@ wss.on('connection', function connection(ws, req) {
     prisma
       .$disconnect()
       .then(() => console.log("Disconnected from DB"))
-      .catch(err => console.log("Error while disconnecting from DB", err));
+      .catch((err: any) => console.log("Error while disconnecting from DB", err));
     return;
   }
 
