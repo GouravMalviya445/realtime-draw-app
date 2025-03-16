@@ -36,10 +36,10 @@ export default function Signup() {
     } catch (err: any) {
       setLoading(false);
       // console.log(err)
-      if (err.response.data.statusCode === 500) {
+      if (err?.response?.data?.statusCode === 500) {
         toast.error(err.response.data.message || "Internal server error")
       } 
-      if (err.response.data.statusCode === 400) {
+      if (err?.response?.data?.statusCode === 400) {
         toast.error(err.response.data.message || "Invalid inputs")
       }
     }
