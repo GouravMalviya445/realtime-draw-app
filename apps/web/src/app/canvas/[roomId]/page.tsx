@@ -1,25 +1,28 @@
-"use client";
-import { initDraw } from "@/draw";
-import { useEffect, useRef, useState} from "react"
+import RoomCanvas from "@/components/RoomCanvas";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
-export default function Canvas() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+export default async function CanvasPage({ params }: {
+  params: Promise<{
+    roomId: string
+  }>
+}) {
+  const roomId = (await params).roomId;
+  const parsedRoomId = parseInt(roomId);
+  const accessToken = (await cookies()).get("accessToken")?.value;
 
-  useEffect(() => { 
-    if (canvasRef.current) {
-      const canvas = canvasRef.current;
-      const ctx = canvas.getContext("2d");
+  if (!accessToken) {
+    redirect("/");
+  }
 
-      canvas.height = window.innerHeight;
-      canvas.width = window.innerWidth;
+  // if room id is not valid then show error
+  if (isNaN(parsedRoomId)) {
+    return (
+      <div className="text-red-500 grid h-screen w-screen place-content-center">Invalid Room Id</div>
+    )
+  }
 
-      if (!ctx) return;
-      
-      initDraw(ctx, canvas);
-    }
-  }, [canvasRef.current]);
-  
   return (
-    <canvas ref={canvasRef} ></canvas>
+    <RoomCanvas roomId={parsedRoomId} token={accessToken} />
   )
 }
