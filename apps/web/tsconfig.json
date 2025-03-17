@@ -17,7 +17,7 @@
     "next-env.d.ts",
     "next.config.js",
     ".next/types/**/*.ts"
-, "tailwind.config.ts", "postcss.config.js"  ],
+, "tailwind.config.ts", "postcss.config.js", "../../packages/ui/src/input.tsx", "src/app/canvas/[roomId]/page.tsx"  ],
   "exclude": [
     "node_modules"
   ]
