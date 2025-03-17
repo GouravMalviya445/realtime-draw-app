@@ -28,8 +28,8 @@ export default function CreateRoom() {
         if (res.data.statusCode === 201) {
           setLoading(false);
           toast.success(res.data.message);
-          reset({roomName: ""})
           router.push(`/rooms/${slug}`)
+          reset({roomName: ""})
         }
       } catch (err: any) {
         setTimeout(() => { 
