@@ -60,7 +60,12 @@ wss.on('connection', function connection(ws, req) {
   
   // receive message event 
   ws.on('message', async function message(data) {
-    const parsedData = JSON.parse(data.toString()); // data = {type: "join-room", roomId: 1}
+    let parsedData = null;
+    try {
+      parsedData = JSON.parse(data.toString()); // data = {type: "join-room", roomId: 1, message: "hello"
+    } catch (error) {
+      console.log("Error while parsing the data", error);
+    }
     
     
     // if user wants to join the room push roomId in the global state
