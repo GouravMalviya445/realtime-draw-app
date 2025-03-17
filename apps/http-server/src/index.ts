@@ -1,15 +1,19 @@
 import express from "express"
 import { config } from "@repo/be-common/src/config/config";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 
 const app = express();
 
 app.use(express.json());
 app.use(cors({
-    origin: [config.corsOrigin ?? "", "http://localhost:3000", "http://localhost:5173"],
+    origin: [config.corsOrigin as string, "http://localhost:3000", "http://localhost:5173"],
     methods: ["POST", "PUT", "DELETE", "UPDATE", "PATCH", "GET"],
-    // credentials: true // PASS THIS IF YOU ARE USING COOKIES FOR AUTHENTICATION
+    credentials: true // PASS THIS IF YOU ARE USING COOKIES FOR AUTHENTICATION
 }))
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static("public"));
+app.use(cookieParser());
 
 // all routes
 import userRouter from "./routes/user.routes";

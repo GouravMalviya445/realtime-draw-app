@@ -58,7 +58,13 @@ const getRoomChatsByRoomId = requestHandler(async (req, res) => {
       orderBy: {
         id: "desc"
       },
-      take: 50
+      take: 50,
+      select: {
+        id: true,
+        userId: true,
+        message: true,
+        roomId: true
+      }
     })
 
     if (!chats) {

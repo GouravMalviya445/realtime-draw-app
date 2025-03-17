@@ -2,7 +2,17 @@ import { requestHandler, ApiError, ApiResponse } from "@repo/be-common/src/utils
 import { hashPassword, comparePassword, createJwtToken } from "@repo/be-common/src/lib";
 import { userSignupValidation, userSigninValidation } from "@repo/common/zod";
 import { prisma } from "@repo/db/prisma";
+import { CookieOptions } from "express";
+import { config } from "@repo/be-common/src/config/config";
 
+
+// cookieOptions
+const cookieOptions: CookieOptions = {
+  httpOnly: true, // prevent client js
+  secure: config.nodeEnv === "production", // requires https 
+  sameSite: "lax",  
+  maxAge: 1000 * 60 * 60 * 24  // 1 day
+}
 
 // Register user 
 const userSignup = requestHandler(async (req, res) => {
@@ -90,6 +100,7 @@ const userSignin = requestHandler(async (req, res) => {
 
     return res
       .status(200)
+      .cookie("accessToken", accessToken, cookieOptions)
       .json(new ApiResponse(
         200,
         "User logged in Successfully",
