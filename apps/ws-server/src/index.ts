@@ -87,7 +87,7 @@ wss.on('connection', function connection(ws, req) {
     if (parsedData?.type === "leave-room") {
       const user = users.find(user => user.ws === ws);
       if (!user) return;
-      user.rooms = user.rooms.filter(room => room !== parsedData.roomId)
+      user.rooms = user.rooms.slice(user.rooms.indexOf(parsedData.roomId), 1);
     }
 
 
