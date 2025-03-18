@@ -6,12 +6,14 @@ import { redirect } from "next/navigation";
 
 async function isAuthenticated(): Promise<boolean> {
   const token = (await cookies()).get("accessToken")?.value;
+    
   if (!token) {
     return false;
   }
   try {
     const res = await apiClient.get("/users/current-user", {
       headers: {
+        "Authorization": `Bearer ${token}`,
         "Cookie": `accessToken=${token}`
       }
     });
@@ -29,7 +31,7 @@ async function isAuthenticated(): Promise<boolean> {
 export default async function Home() {
   const isAuth = await isAuthenticated();
   if (isAuth) {
-    return redirect("/rooms/create");
+    return redirect("/dashboard");
   }
   return (
     <LandingPage /> 

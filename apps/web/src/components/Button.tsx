@@ -24,12 +24,12 @@ const variants = {
   "simple": "bg-transparent hover:underline focus:outline-none"
 };
 
-const defaultClasses = "font-semibold cursor-pointer focus:outline-none focus:ring focus:ring-opacity-50 transition-all ease-in"
+const defaultClasses = "font-semibold cursor-pointer focus:outline-none focus:ring focus:ring-opacity-50 transition-all ease-in flex items-center justify-center gap-2";
 
 const sizes = {
-  "sm": "px-4 py-1",
-  "md": "px-6 py-2 text-md",
-  "lg": "px-8 py-2 text-lg",
+  "sm": "px-2 py-1",
+  "md": "px-4 py-2 text-md",
+  "lg": "px-6 py-4 text-lg",
   "default": "px-1 py-1"
 }
 

@@ -5,6 +5,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   containerClassName?: string;
   labelClassName?: string;
   inputClassName?: string;
+  startIcon?: React.ReactNode;
   type?: "text" | "email" | "password"
 }
 
@@ -14,6 +15,7 @@ export function Input({
   labelClassName = "",
   inputClassName = "",
   label = "",
+  startIcon,
   ...props
 }: InputProps) {
   return (
