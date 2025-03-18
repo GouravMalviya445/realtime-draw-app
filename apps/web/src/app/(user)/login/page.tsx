@@ -30,7 +30,7 @@ export default function Signup() {
       if (res.data.success) {
         setLoading(false);
         toast.success(res.data.message);
-        // router.push() // TODO: redirect to main home page when user details will be stored
+        router.push("/dashboard") // TODO: redirect to main home page when user details will be stored
         reset();
       }
     } catch (err: any) {
