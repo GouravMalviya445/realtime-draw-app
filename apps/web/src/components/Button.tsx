@@ -1,8 +1,8 @@
 "use client";
 
-import { ReactNode } from "react";
+import { ButtonHTMLAttributes, HTMLProps, ReactNode } from "react";
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement>{
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement>{
   children: ReactNode;
   type?: "button" | "submit" | "reset";
   className?: string;
@@ -10,6 +10,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement>{
   size?: "sm" | "md" | "lg" | "default";
   startIcon?: ReactNode;
   endIcon?: ReactNode;
+  onClick?: () => void
 }
 
 const variants = {
@@ -21,7 +22,7 @@ const variants = {
   "light": "bg-gray-200 hover:bg-gray-300 text-gray-900 rounded-md focus:ring-gray-300",
   "dark": "bg-gray-800 hover:bg-gray-900 text-white rounded-md focus:ring-gray-700",
   "link": "text-blue-500 hover:text-blue-600 hover:underline focus:outline-none",
-  "simple": "bg-transparent hover:underline focus:outline-none"
+  "simple": "hover:underline focus:outline-none"
 };
 
 const defaultClasses = "font-semibold cursor-pointer focus:outline-none focus:ring focus:ring-opacity-50 transition-all ease-in flex items-center justify-center gap-2";
@@ -35,17 +36,17 @@ const sizes = {
 
 export const Button = ({
   children,
-  type = "button",
   className = "",
   variant = "primary",
   size = "default",
   startIcon,
-  endIcon
+  endIcon,
+  ...props
 }: ButtonProps) => {
   return (
     <button
-      type={type}
       className={`${defaultClasses} ${variants[variant]} ${sizes[size]} ${className}`}
+      {...props}
     >
       {startIcon && startIcon} {/* if user sends any icon at start */}
       {children}

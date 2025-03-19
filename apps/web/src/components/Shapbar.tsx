@@ -11,10 +11,10 @@ export function ShapeBar({ children, className = "" }: {children: React.ReactNod
 }
 
 
-export function ShapeBarIcon({ shape, shortcut, onClick }: { shape: React.ReactNode, shortcut?: number, onClick?: () => void }) {
+export function ShapeBarIcon({isActive, shape, shortcut, onClick, className }: { isActive: boolean, shape: React.ReactNode, shortcut?: number, onClick?: () => void, className?: string}) {
   return (
     <div className="flex flex-col justify-center items-center">
-      <Button onClick={onClick} className="text-white hover:bg-cyan-200/40 rounded-lg px-2 py-2 " variant="simple">
+      <Button onClick={onClick} className={`text-white hover:bg-cyan-200/40 transition-all ease-in-out rounded-lg px-2 py-2 ${isActive && "bg-cyan-200/40 "} ${className}`} variant="simple">
         {shape}
       </Button>
       {shortcut && <span className="text-[13px] leading-2 text-black">{shortcut}</span>}
