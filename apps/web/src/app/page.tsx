@@ -1,4 +1,3 @@
-// "use client";
 import { LandingPage } from "@/components/LandingPage";
 import { apiClient } from "@/lib/apiClient";
 import { cookies } from "next/headers";

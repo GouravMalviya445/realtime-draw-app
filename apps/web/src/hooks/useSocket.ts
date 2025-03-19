@@ -8,8 +8,6 @@ export function useSocket(roomId: number, token?: string) {
   useEffect(() => {
     if (typeof config.wsServerUrl !== "string") return;
 
-    console.log(token);
-
     // pass the accessToken to query params in the url
     socket.current = new WebSocket(`${config.wsServerUrl}?accessToken=${token}&transport=websocket`);
 
