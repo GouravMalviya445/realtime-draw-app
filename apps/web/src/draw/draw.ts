@@ -56,94 +56,115 @@ class Draw {
     }
   }
 
-  // mouse handlers
-  initMouseHandlers() {
-    if (this.selectedShape === "none") return;
+  // Mouse Down
+  handleMouseDown = (e: MouseEvent) => {
+    this.clicked = true;
+    this.startX = e.clientX;
+    this.startY = e.clientY;
+  }
 
-    // MouseDown
-    this.canvas.addEventListener("mousedown", (e) => {
-      this.clicked = true;
-      this.startX = e.clientX;
-      this.startY = e.clientY;
-    })
+  // Mouse Up
+  handleMouseUp = (e: MouseEvent) => { 
+    this.clicked = false;
+    const width = e.clientX - this.startX;
+    const height = e.clientY - this.startY;
 
-    // MouseUp
-    this.canvas.addEventListener("mouseup", (e) => { 
-      this.clicked = false;
+
+    let shape: Shape | undefined;
+    console.log("shape:", this.selectedShape);
+    if (this.selectedShape === "rectangle") {
+      shape = {
+        type: "rectangle",
+        x: this.startX,
+        y: this.startY,
+        width,
+        height
+      }
+    } else if (this.selectedShape === "circle") {
+      shape = {
+        type: "circle",
+        centerX: (width / 2) + this.startX,
+        centerY: (height / 2) + this.startY,
+        radius: Math.max(height, width) / 2
+      }
+    } else if (this.selectedShape === "line") {
+      shape = {
+        type: "line",
+        startX: this.startX,
+        startY: this.startY,
+        endX: e.clientX,
+        endY: e.clientY
+      }
+    } else if (this.selectedShape === "pencil") {
+      // TODO: add for pencil
+    }
+
+    // console.log(shape)
+
+    if (!shape) return;
+    this.existingShapes.push(shape);
+
+
+    try {
+      const parsedMessage = JSON.stringify({
+        type: "chat",
+        roomId: this.roomId,
+        message: JSON.stringify(shape)
+      })
+      this.socket.send(parsedMessage);
+    } catch (err) {
+      console.log("Error while sending shape: ", err);
+    }
+
+  }
+
+  // Mouse Move
+  handleMouseMove = (e: MouseEvent) => {
+    if (this.clicked) {
       const width = e.clientX - this.startX;
       const height = e.clientY - this.startY;
 
+      this.ctx.strokeStyle = "#E0E0E0";
 
-      let shape: Shape | undefined;
-      console.log("shape:", this.selectedShape);
+      this.clearCanvas();
+
       if (this.selectedShape === "rectangle") {
-        shape = {
-          type: "rectangle",
-          x: this.startX,
-          y: this.startY,
-          width,
-          height
-        }
+        this.ctx.strokeRect(this.startX, this.startY, width, height);
       } else if (this.selectedShape === "circle") {
-        shape = {
-          type: "circle",
-          centerX: (width / 2) + this.startX,
-          centerY: (height / 2) + this.startY,
-          radius: Math.max(height, width) / 2
-        }
+        const centerX = (width / 2) + this.startX;
+        const centerY = (height / 2) + this.startY;
+        const radius = Math.abs(Math.max(height, width) / 2);
+        console.log(radius)
+        this.ctx.beginPath();
+        this.ctx.arc(centerX, centerY, Math.abs(radius), 0, Math.PI * 2);
+        this.ctx.stroke();
+        this.ctx.closePath();
       } else if (this.selectedShape === "line") {
-        // TODO: add for line
-      } else if (this.selectedShape === "pencil") {
-        // TODO: add for pencil
+        this.ctx.beginPath();
+        this.ctx.moveTo(this.startX, this.startY);
+        this.ctx.lineTo(e.clientX, e.clientY);
+        this.ctx.stroke();
+        this.ctx.closePath();
       }
+    }
+  }
 
-      if (!shape) return;
-      this.existingShapes.push(shape);
+  // init mouse handlers
+  initMouseHandlers() {
+    if (this.selectedShape === "none") return;
 
+    this.canvas.addEventListener("mousedown", this.handleMouseDown);
 
-      try {
-        const parsedMessage = JSON.stringify({
-          type: "chat",
-          roomId: this.roomId,
-          message: JSON.stringify(shape)
-        })
-        this.socket.send(parsedMessage);
-      } catch (err) {
-        console.log("Error while sending shape: ", err);
-      }
+    this.canvas.addEventListener("mouseup", this.handleMouseUp);
 
-    })
-
-    // MouseMove
-    this.canvas.addEventListener("mousemove", (e) => {
-      if (this.clicked) {
-        const width = e.clientX - this.startX;
-        const height = e.clientY - this.startY;
-
-        this.ctx.strokeStyle = "#E0E0E0";
-
-        this.clearCanvas();
-
-        if (this.selectedShape === "rectangle") {
-          this.ctx.strokeRect(this.startX, this.startY, width, height);
-        } else if (this.selectedShape === "circle") {
-          const centerX = (width / 2) + this.startX;
-          const centerY = (height / 2) + this.startY;
-          const radius = Math.max(height, width) / 2;
-          this.ctx.beginPath();
-          this.ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
-          this.ctx.stroke();
-          this.ctx.closePath();
-        } else if (this.selectedShape === "line") {
-          this.ctx.beginPath();
-          this.ctx.moveTo(this.startX, this.startY);
-          this.ctx.lineTo(e.clientX, e.clientY);
-          this.ctx.stroke();
-          this.ctx.closePath();
-        }
-      }
-    })
-    
+    this.canvas.addEventListener("mousemove", this.handleMouseMove);
+  }
+  
+  // destroy event handlers 
+  destroy() {
+    this.canvas.removeEventListener("mousedown", this.handleMouseDown);
+    this.canvas.removeEventListener("mouseup", this.handleMouseUp);
+    this.canvas.removeEventListener("mousemove", this.handleMouseMove);
   }
 
   // clear canvas
@@ -158,7 +179,13 @@ class Draw {
         this.ctx.strokeRect(shape.x, shape.y, shape.width, shape.height);
       } else if (shape.type === "circle") {
         this.ctx.beginPath();
-        this.ctx.arc(shape.centerX, shape.centerY, shape.radius, 0, Math.PI * 2, false);
+        this.ctx.arc(shape.centerX, shape.centerY, Math.abs(shape.radius), 0, Math.PI * 2);
+        this.ctx.strokeStyle = "#E0E0E0";
+        this.ctx.stroke();
+      } else if (shape.type === "line") {
+        this.ctx.beginPath();
+        this.ctx.moveTo(shape.startX, shape.startY);
+        this.ctx.lineTo(shape.endX, shape.endY);
         this.ctx.strokeStyle = "#E0E0E0";
         this.ctx.stroke();
       }

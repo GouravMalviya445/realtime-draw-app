@@ -6,7 +6,7 @@ import { Circle, Minus, MoveRight, PencilLine, Square } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 export function Canvas({ roomId, socket }: { roomId: number, socket: WebSocket }) {
-  const [selectedTool, setSelectedTool] = useState<Tool>("none");
+  const [selectedTool, setSelectedTool] = useState<Tool>("circle");
   const [draw, setDraw] = useState<Draw>();
   
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -17,6 +17,10 @@ export function Canvas({ roomId, socket }: { roomId: number, socket: WebSocket }
     draw?.init();
     draw?.initSocketHandlers();
     draw?.initMouseHandlers();
+
+    return () => {
+      draw?.destroy();
+    }
   }, [selectedTool, draw])
 
   useEffect(() => { 
