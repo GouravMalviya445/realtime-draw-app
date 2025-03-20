@@ -1,6 +1,8 @@
 
 export type Tool = "circle" | "rectangle" | "line" | "arrow" | "pencil" | "none";
 
+export type Point = { x: number, y: number };
+
 export type Shape = {
   type: "rectangle";
   x: number;
@@ -14,10 +16,7 @@ export type Shape = {
   radius: number;
 } | {
   type: "pencil";
-  startX: number;
-  startY: number;
-  endX: number;
-  endY: number;
+  path: Point[]
 } | {
   type: "line";
   startX: number;

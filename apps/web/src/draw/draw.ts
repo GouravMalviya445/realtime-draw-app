@@ -1,5 +1,7 @@
+import { ContrastIcon } from "lucide-react";
 import { getExistingShapes } from "./httpRequest";
-import {Tool, Shape} from "./types";
+import type {Tool, Shape, Point} from "./types";
+
 
 class Draw {
 
@@ -8,10 +10,11 @@ class Draw {
   private roomId: number;
   private socket: WebSocket;
   private existingShapes: Shape[];
-  private clicked: boolean;
-  private startX: number;
-  private startY: number;
-  private selectedShape: Tool;
+  private clicked: boolean = false;
+  private startX: number = 0;
+  private startY: number = 0;
+  private selectedShape: Tool = "none";
+  private pencilPath: Point[] = [];
 
   constructor(canvas: HTMLCanvasElement, roomId: number, socket: WebSocket) {
     this.canvas = canvas;
@@ -19,10 +22,7 @@ class Draw {
     this.roomId = roomId;
     this.socket = socket;
     this.existingShapes = [];
-    this.clicked = false;
-    this.startX = 0;
-    this.startY = 0;
-    this.selectedShape = "none";
+
 
     this.ctx.fillStyle = "#121212";
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
@@ -70,6 +70,7 @@ class Draw {
     const height = e.clientY - this.startY;
 
 
+
     let shape: Shape | undefined;
     console.log("shape:", this.selectedShape);
     if (this.selectedShape === "rectangle") {
@@ -96,7 +97,13 @@ class Draw {
         endY: e.clientY
       }
     } else if (this.selectedShape === "pencil") {
-      // TODO: add for pencil
+      shape = {
+        type: "pencil",
+        path: this.pencilPath
+      }
+
+      // make sure you clear the old paths otherwise drawing will be start where you last left off
+      this.pencilPath = [];
     }
 
     // console.log(shape)
@@ -145,8 +152,28 @@ class Draw {
         this.ctx.lineTo(e.clientX, e.clientY);
         this.ctx.stroke();
         this.ctx.closePath();
+      } else if (this.selectedShape === "pencil") {
+        const newPath = { x: e.offsetX, y: e.offsetY };
+        this.pencilPath.push(newPath);
+        this.drawPencil(this.pencilPath);
       }
     }
+  }
+
+  // Draw Pencil
+  drawPencil(points: Point[]) {
+    if (points.length === 0) return;
+        
+    this.ctx.beginPath();
+    this.ctx.strokeStyle = "#E0E0E0";
+    if (points.length > 0) {
+      this.ctx.moveTo(points?.[0]?.x as number, points?.[0]?.y as number);
+      points.map(point => {
+        this.ctx.lineTo(point.x, point.y);
+      })
+    }
+    this.ctx.stroke();
+    this.ctx.closePath();
   }
 
   // init mouse handlers
@@ -188,6 +215,8 @@ class Draw {
         this.ctx.lineTo(shape.endX, shape.endY);
         this.ctx.strokeStyle = "#E0E0E0";
         this.ctx.stroke();
+      } else if (shape.type === "pencil") {
+        this.drawPencil(shape.path);
       }
     })
   }
